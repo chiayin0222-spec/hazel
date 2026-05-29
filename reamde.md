@@ -1,6 +1,8 @@
 # Hazel Personal Clock Dashboard
 
+LIVE DEMO https://chiayin0222-spec.github.io/hazel/
 LIVE DEMOhttps://chiayin0222-spec.github.io/hazel/
+LIVE DOMO https://chiayin0222-spec.github.io/hazel/
 LIVE DOMOhttps://chiayin0222-spec.github.io/hazel/
 
 A premium, glassmorphic personal clock dashboard featuring ambient background animations, real-time clock updates, and interactive design elements.
