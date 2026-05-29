@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hello, I'm Hazel</title>
+    <!-- Premium Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800&family=Space+Grotesk:wght@400;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* CSS Reset & Variables */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        :root {
+            --bg-dark: #07070c;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --card-border: rgba(255, 255, 255, 0.08);
+            --text-primary: #ffffff;
+            --text-secondary: rgba(255, 255, 255, 0.6);
+            --glow-color: rgba(99, 102, 241, 0.15);
+            --accent-gradient: linear-gradient(135deg, #818cf8 0%, #c084fc 50%, #f472b6 100%);
+        }
+
+        body {
+            font-family: 'Outfit', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* Animated Ambient Backdrops (Aurora Blobs) */
+        .aurora-container {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: 1;
+            overflow: hidden;
+            pointer-events: none;
+        }
+
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.45;
+            mix-blend-mode: screen;
+            animation: float 20s infinite alternate;
+        }
+
+        .blob-1 {
+            width: 500px;
+            height: 500px;
+            background: radial-gradient(circle, #6366f1 0%, rgba(99, 102, 241, 0) 70%);
+            top: -10%;
+            left: -10%;
+            animation-duration: 25s;
+        }
+
+        .blob-2 {
+            width: 600px;
+            height: 600px;
+            background: radial-gradient(circle, #db2777 0%, rgba(219, 39, 119, 0) 70%);
+            bottom: -20%;
+            right: -10%;
+            animation-duration: 30s;
+        }
+
+        .blob-3 {
+            width: 450px;
+            height: 450px;
+            background: radial-gradient(circle, #4f46e5 0%, rgba(79, 70, 229, 0) 70%);
+            top: 40%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            animation-duration: 18s;
+        }
+
+        @keyframes float {
+            0% {
+                transform: translate(0, 0) scale(1) rotate(0deg);
+            }
+            50% {
+                transform: translate(80px, 50px) scale(1.1) rotate(180deg);
+            }
+            100% {
+                transform: translate(-40px, -80px) scale(0.9) rotate(360deg);
+            }
+        }
+
+        /* Glassmorphic Container Card */
+        .card-wrapper {
+            position: relative;
+            z-index: 10;
+            perspective: 1000px; /* Enable 3D tilt effect */
+        }
+
+        .card {
+            width: 450px;
+            max-width: 90vw;
+            padding: 3rem 2.5rem;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 28px;
+            backdrop-filter: blur(30px);
+            -webkit-backdrop-filter: blur(30px);
+            box-shadow: 
+                0 4px 30px rgba(0, 0, 0, 0.4),
+                inset 0 1px 1px rgba(255, 255, 255, 0.1),
+                0 0 80px rgba(99, 102, 241, 0.05);
+            text-align: center;
+            transform-style: preserve-3d;
+            transition: transform 0.5s cubic-bezier(0.23, 1, 0.32, 1), box-shadow 0.5s;
+        }
+
+        .card:hover {
+            box-shadow: 
+                0 20px 50px rgba(0, 0, 0, 0.6),
+                inset 0 1px 2px rgba(255, 255, 255, 0.2),
+                0 0 100px rgba(99, 102, 241, 0.15);
+        }
+
+        /* Avatar styling */
+        .avatar-container {
+            width: 100px;
+            height: 100px;
+            margin: 0 auto 2rem;
+            border-radius: 50%;
+            background: var(--accent-gradient);
+            padding: 4px;
+            box-shadow: 0 10px 25px rgba(129, 140, 248, 0.3);
+            transform: translateZ(50px); /* 3D pop out */
+        }
+
+        .avatar {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: #0f1015;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #ffffff;
+            font-size: 2.2rem;
+            font-weight: 800;
+            font-family: 'Space Grotesk', sans-serif;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.2);
+        }
+
+        /* Pill Badge */
+        .badge {
+            display: inline-block;
+            padding: 6px 16px;
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 100px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            letter-spacing: 0.15em;
+            text-transform: uppercase;
+            color: #818cf8;
+            margin-bottom: 1rem;
+            transform: translateZ(30px);
+        }
+
+        /* Name Greeting */
+        .greeting {
+            font-size: 2.5rem;
+            font-weight: 800;
+            line-height: 1.2;
+            margin-bottom: 2rem;
+            letter-spacing: -0.02em;
+            transform: translateZ(40px);
+        }
+
+        .highlight {
+            background: var(--accent-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            font-family: 'Space Grotesk', sans-serif;
+            position: relative;
+        }
+
+        /* Divider line */
+        .divider {
+            width: 60px;
+            height: 4px;
+            background: var(--accent-gradient);
+            margin: 0 auto 2rem;
+            border-radius: 2px;
+            transform: translateZ(20px);
+        }
+
+        /* Clock & Calendar Display */
+        .time-container {
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid rgba(255, 255, 255, 0.03);
+            border-radius: 20px;
+            padding: 1.8rem;
+            margin-bottom: 1.5rem;
+            transform: translateZ(45px);
+            box-shadow: inset 0 2px 8px rgba(0,0,0,0.3);
+        }
+
+        .time-label-wrapper {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+            margin-bottom: 0.8rem;
+        }
+
+        .pulse-dot {
+            width: 8px;
+            height: 8px;
+            background-color: #10b981;
+            border-radius: 50%;
+            box-shadow: 0 0 10px #10b981;
+            animation: pulse 1.5s infinite;
+        }
+
+        @keyframes pulse {
+            0% {
+                transform: scale(0.9);
+                opacity: 0.5;
+            }
+            50% {
+                transform: scale(1.2);
+                opacity: 1;
+                box-shadow: 0 0 14px #10b981;
+            }
+            100% {
+                transform: scale(0.9);
+                opacity: 0.5;
+            }
+        }
+
+        .time-label {
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: var(--text-secondary);
+            font-weight: 600;
+        }
+
+        .time-display {
+            font-size: 2.8rem;
+            font-weight: 700;
+            font-family: 'Space Grotesk', sans-serif;
+            color: #ffffff;
+            letter-spacing: -0.01em;
+            margin-bottom: 0.5rem;
+            text-shadow: 0 2px 10px rgba(0,0,0,0.5);
+        }
+
+        .date-display {
+            font-size: 1rem;
+            color: var(--text-secondary);
+            font-weight: 400;
+        }
+
+        /* Interactive Ambient Glow Settings Switcher */
+        .options-bar {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin-top: 1.5rem;
+            transform: translateZ(25px);
+        }
+
+        .btn-theme {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            border-radius: 12px;
+            color: var(--text-primary);
+            padding: 8px 16px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-theme:hover {
+            background: rgba(255, 255, 255, 0.12);
+            border-color: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+        }
+
+        .btn-theme:active {
+            transform: translateY(0);
+        }
+
+        .icon-sparkle {
+            color: #c084fc;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Aurora Background Blobs -->
+    <div class="aurora-container">
+        <div class="blob blob-1" id="blob-1"></div>
+        <div class="blob blob-2" id="blob-2"></div>
+        <div class="blob blob-3" id="blob-3"></div>
+    </div>
+
+    <!-- Glassmorphic Card Container -->
+    <div class="card-wrapper" id="card-wrapper">
+        <div class="card" id="card">
+            <!-- Profile Avatar / Initial -->
+            <div class="avatar-container">
+                <div class="avatar">H</div>
+            </div>
+
+            <!-- Welcome Badge -->
+            <div class="badge">Greeting</div>
+
+            <!-- Header -->
+            <h1 class="greeting">Hello,<br>my name is <span class="highlight">Hazel</span></h1>
+
+            <!-- Decorative Divider -->
+            <div class="divider"></div>
+
+            <!-- Current Time & Date Widget -->
+            <div class="time-container">
+                <div class="time-label-wrapper">
+                    <span class="pulse-dot"></span>
+                    <span class="time-label">Current Time & Date</span>
+                </div>
+                <div class="time-display" id="time-display">00:00:00</div>
+                <div class="date-display" id="date-display">Loading date...</div>
+            </div>
+
+            <!-- Theme / Color Control Interaction -->
+            <div class="options-bar">
+                <button class="btn-theme" id="btn-color">
+                    <span class="icon-sparkle">✨</span> Shift Aurora Color
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const timeDisplay = document.getElementById('time-display');
+        const dateDisplay = document.getElementById('date-display');
+        const card = document.getElementById('card');
+        const cardWrapper = document.getElementById('card-wrapper');
+        const btnColor = document.getElementById('btn-color');
+        const blob1 = document.getElementById('blob-1');
+        const blob2 = document.getElementById('blob-2');
+        const blob3 = document.getElementById('blob-3');
+
+        // Dynamic Time and Date updates
+        function updateClock() {
+            const now = new Date();
+            
+            // Format time: hh:mm:ss
+            let hours = now.getHours();
+            let minutes = now.getMinutes();
+            let seconds = now.getSeconds();
+            
+            // Padding
+            hours = hours < 10 ? '0' + hours : hours;
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            seconds = seconds < 10 ? '0' + seconds : seconds;
+            
+            timeDisplay.textContent = `${hours}:${minutes}:${seconds}`;
+
+            // Format date: Day of week, Month Day, Year
+            const options = { 
+                weekday: 'long', 
+                year: 'numeric', 
+                month: 'long', 
+                day: 'numeric' 
+            };
+            dateDisplay.textContent = now.toLocaleDateString(undefined, options);
+        }
+
+        // Run clock updates immediately and check every 200ms
+        updateClock();
+        setInterval(updateClock, 200);
+
+        // 3D Parallax Tilt Effect on Mouse Move
+        cardWrapper.addEventListener('mousemove', (e) => {
+            const cardRect = card.getBoundingClientRect();
+            
+            // Find relative mouse coordinates on the card wrapper
+            const x = e.clientX - cardRect.left - (cardRect.width / 2);
+            const y = e.clientY - cardRect.top - (cardRect.height / 2);
+            
+            // Calculate rotation degrees (cap at 15deg)
+            const rotateX = -(y / (cardRect.height / 2)) * 12;
+            const rotateY = (x / (cardRect.width / 2)) * 12;
+            
+            card.style.transform = `rotateX(${rotateX}deg) rotateY(${rotateY}deg)`;
+        });
+
+        // Reset Card Rotation on Mouse Leave
+        cardWrapper.addEventListener('mouseleave', () => {
+            card.style.transform = 'rotateX(0deg) rotateY(0deg)';
+        });
+
+        // Aurora Color Palette Shifter (Interactive Fun Feature)
+        const auroraPalettes = [
+            {
+                blob1: 'radial-gradient(circle, #6366f1 0%, rgba(99, 102, 241, 0) 70%)', // Original
+                blob2: 'radial-gradient(circle, #db2777 0%, rgba(219, 39, 119, 0) 70%)',
+                blob3: 'radial-gradient(circle, #4f46e5 0%, rgba(79, 70, 229, 0) 70%)'
+            },
+            {
+                blob1: 'radial-gradient(circle, #10b981 0%, rgba(16, 185, 129, 0) 70%)', // Emerald/Mint
+                blob2: 'radial-gradient(circle, #3b82f6 0%, rgba(59, 130, 246, 0) 70%)', // Sky Blue
+                blob3: 'radial-gradient(circle, #8b5cf6 0%, rgba(139, 92, 246, 0) 70%)'  // Lavender
+            },
+            {
+                blob1: 'radial-gradient(circle, #f59e0b 0%, rgba(245, 158, 11, 0) 70%)', // Warm Gold
+                blob2: 'radial-gradient(circle, #ef4444 0%, rgba(239, 68, 68, 0) 70%)',  // Crimson
+                blob3: 'radial-gradient(circle, #ec4899 0%, rgba(236, 72, 153, 0) 70%)'  // Pink
+            },
+            {
+                blob1: 'radial-gradient(circle, #06b6d4 0%, rgba(6, 182, 212, 0) 70%)', // Teal/Cyan
+                blob2: 'radial-gradient(circle, #6366f1 0%, rgba(99, 102, 241, 0) 70%)', // Indigo
+                blob3: 'radial-gradient(circle, #14b8a6 0%, rgba(20, 184, 166, 0) 70%)'  // Turquoise
+            }
+        ];
+
+        let currentPaletteIndex = 0;
+
+        btnColor.addEventListener('click', () => {
+            currentPaletteIndex = (currentPaletteIndex + 1) % auroraPalettes.length;
+            const newPalette = auroraPalettes[currentPaletteIndex];
+            
+            blob1.style.background = newPalette.blob1;
+            blob2.style.background = newPalette.blob2;
+            blob3.style.background = newPalette.blob3;
+            
+            // Add a small scale bump to the button for visual feedback
+            btnColor.style.transform = 'scale(0.95)';
+            setTimeout(() => {
+                btnColor.style.transform = 'none';
+            }, 100);
+        });
+    </script>
+</body>
+</html>
