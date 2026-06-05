@@ -4,6 +4,7 @@ LIVE DEMO https://chiayin0222-spec.github.io/hazel/
 
 
 A premium, glassmorphic personal clock dashboard featuring ambient background animations, real-time clock updates, and interactive design elements.
+[https://github-readme-stats.vercel.app/api?username=chiayin0222-spec&show_icons=true&theme=radical](https://github-readme-stats.vercel.app/api?username=chiayin0222-spec&show_icons=false&theme=tokyonight)
 
 ## 🚀 Live Demo
 
