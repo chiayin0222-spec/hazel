@@ -1,2 +1,5 @@
 streamlit
 matplotlib
+scipy
+scikit-learn
+pandas
