@@ -563,10 +563,4 @@ with right_col:
             </div>
         """, unsafe_allow_html=True)
 
-    st.markdown("---")
-    st.markdown('<div class="panel-title">💬 對話記錄</div>', unsafe_allow_html=True)
-    st.markdown("""
-    <div style='background-color: #fff1f2; border: 1px solid #fecdd3; border-radius: 8px; padding: 10px; font-size: 0.8rem; color: #9f1239;'>
-        🤖 Antigravity 代理人已將專案重構為粉紅極簡版，並優化了 Step 1/Step 2 的高維投影與參數調校連動。
-    </div>
-    """, unsafe_allow_html=True)
+
