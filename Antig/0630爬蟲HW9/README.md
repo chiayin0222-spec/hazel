@@ -1,49 +1,54 @@
-# 🎬 電影查詢與 AI 聊天機器人 Web 系統 (HW9)
+# Scrape Movie List
 
-本專案是一個基於 **Streamlit** 開發的電影查詢網頁系統。系統內建了從 https://ssr1.scrape.center 爬取的 100 部精選電影資料，採用精美的**輕奢銀灰色玻璃擬真 (Glassmorphism)** 視覺風格設計，並完美整合了 **Google Gemini AI 電影小助理** 與**電影主題動態線條圖**。
+從 https://ssr1.scrape.center 爬取的電影資料，共 **100 部**電影。
 
-## 🌟 系統特色
-- 🥈 **輕奢銀灰色主題**：採用金屬銀灰漸層背板，搭配半透明的白色乳膠磨砂玻璃卡片與高對比深色文字，視覺舒適且極具質感。
-- 🏆 **電影排名 & 海報牆**：
-  - **🏆 排名分頁**：展示評分 Top 10 與時長 Top 10 雙排行榜。
-  - **📋 全部電影分頁**：以網格化海報牆展示 100 部電影的海報、年份、地區與詳細評分，支援直連詳情網頁。
-- 🤖 **Gemini AI 側邊欄助理**：側邊欄內置 AI 電影助手，支援智慧推薦與問答，並提供豐富的引導提示語，協助您快速尋找心儀的電影。
-- 🎨 **電影主題 SVG 動態頁尾**：網頁底部設有復古電影放映機、場記板、爆米花與電影票的向量 SVG 手繪線條動畫，具備微幅漂浮與呼吸燈特效。
+## 專案檔案
 
-## 📁 專案檔案結構
 | 檔案 | 說明 |
 |------|------|
-| `app.py` | **Streamlit Web 系統主程式**（包含 UI 介面、排名展示、海報牆與側邊欄 AI 小助理） |
-| `crawler.py` | 爬蟲主程式，爬取 ssr1.scrape.center 全部 100 部電影並產出 `movies.json` |
-| `chatbot.py` | 本地規則匹配聊天機器人（舊版終端指令版） |
-| `movie_rank.py` | 電影數據排行與統計分析腳本 |
-| `movies.json` | 100 部電影的完整爬取資料（JSON 格式，由 crawler.py 產生） |
-| `movies.xlsx` | 100 部電影的 Excel 格式資料 |
-| `.gitignore` | 排除 `.env`（防金鑰洩露）、快取與暫存檔 |
+| `crawler.py` | 爬蟲主程式，自動爬取全部頁面，產出 `movies.json` |
+| `chatbot.py` | 電影聊天機器人，支援搜尋、分類篩選、評分排名 |
+| `movie_rank.py` | 電影排名分析（評分、時長、分類、地區、年份） |
+| `scrape.py` | 第一頁爬蟲範例 |
+| `page1.html` | 第一頁 HTML 原始檔 |
+| `movies.json` | 100 部電影完整資料（JSON 格式） |
+| `movies.xlsx` | 100 部電影 Excel 表格（含海報連結） |
 
-## 🚀 快速開始
+## 使用方式
 
-### 1. 安裝依賴項
-請確認已安裝 Python 3.8+，並執行以下指令安裝所需套件：
 ```bash
-pip install streamlit pandas openpyxl google-generativeai python-dotenv
-```
-
-### 2. 設定 API 金鑰
-於專案根目錄下建立 `.env` 檔案，並填入您的 Gemini API Key：
-```env
-GEMINI_API_KEY=您的_GEMINI_API_KEY
-```
-
-### 3. 爬取電影數據
-若尚未取得資料，請先執行爬蟲抓取：
-```bash
+# 爬取全部電影
 python crawler.py
+
+# 啟動聊天機器人
+python chatbot.py
+
+# 查看排名統計
+python movie_rank.py
 ```
 
-### 4. 啟動 Web 系統
-執行 Streamlit 啟動網頁介面：
-```bash
-streamlit run app.py
-```
-啟動後會自動開啟瀏覽器視窗，預設網址為 `http://localhost:8501`。
+## 電影列表（第 1 頁範例）
+
+完整 100 部電影資料請見 `movies.json` 或 `movies.xlsx`。
+
+| # | 海報 | 名稱 | 分類 | 地區 | 時長 | 上映日期 | 評分 |
+|---|------|------|------|------|------|----------|------|
+| 1 | <img src="https://p0.meituan.net/movie/ce4da3e03e655b5b88ed31b5cd7896cf62472.jpg@464w_644h_1e_1c" width="80"> | [霸王别姬 - Farewell My Concubine](https://ssr1.scrape.center/detail/1) | 剧情, 爱情 | 中国内地、中国香港 | 171 分钟 | 1993-07-26 上映 | **9.5** |
+| 2 | <img src="https://p1.meituan.net/movie/6bea9af4524dfbd0b668eaa7e187c3df767253.jpg@464w_644h_1e_1c" width="80"> | [这个杀手不太冷 - Léon](https://ssr1.scrape.center/detail/2) | 剧情, 动作, 犯罪 | 法国 | 110 分钟 | 1994-09-14 上映 | **9.5** |
+| 3 | <img src="https://p0.meituan.net/movie/283292171619cdfd5b240c8fd093f1eb255670.jpg@464w_644h_1e_1c" width="80"> | [肖申克的救赎 - The Shawshank Redemption](https://ssr1.scrape.center/detail/3) | 剧情, 犯罪 | 美国 | 142 分钟 | 1994-09-10 上映 | **9.5** |
+| 4 | <img src="https://p1.meituan.net/movie/b607fba7513e7f15eab170aac1e1400d878112.jpg@464w_644h_1e_1c" width="80"> | [泰坦尼克号 - Titanic](https://ssr1.scrape.center/detail/4) | 剧情, 爱情, 灾难 | 美国 | 194 分钟 | 1998-04-03 上映 | **9.5** |
+| 5 | <img src="https://p0.meituan.net/movie/289f98ceaa8a0ae737d3dc01cd05ab052213631.jpg@464w_644h_1e_1c" width="80"> | [罗马假日 - Roman Holiday](https://ssr1.scrape.center/detail/5) | 剧情, 喜剧, 爱情 | 美国 | 118 分钟 | 1953-08-20 上映 | **9.5** |
+| 6 | <img src="https://p0.meituan.net/movie/da64660f82b98cdc1b8a3804e69609e041108.jpg@464w_644h_1e_1c" width="80"> | [唐伯虎点秋香 - Flirting Scholar](https://ssr1.scrape.center/detail/6) | 喜剧, 爱情, 古装 | 中国香港 | 102 分钟 | 1993-07-01 上映 | **9.5** |
+| 7 | <img src="https://p0.meituan.net/movie/223c3e186db3ab4ea3bb14508c709400427933.jpg@464w_644h_1e_1c" width="80"> | [乱世佳人 - Gone with the Wind](https://ssr1.scrape.center/detail/7) | 剧情, 爱情, 历史, 战争 | 美国 | 238 分钟 | 1939-12-15 上映 | **9.5** |
+| 8 | <img src="https://p0.meituan.net/movie/1f0d671f6a37f9d7b015e4682b8b113e174332.jpg@464w_644h_1e_1c" width="80"> | [喜剧之王 - The King of Comedy](https://ssr1.scrape.center/detail/8) | 剧情, 喜剧, 爱情 | 中国香港 | 85 分钟 | 1999-02-13 上映 | **9.5** |
+| 9 | <img src="https://p0.meituan.net/movie/8959888ee0c399b0fe53a714bc8a5a17460048.jpg@464w_644h_1e_1c" width="80"> | [楚门的世界 - The Truman Show](https://ssr1.scrape.center/detail/9) | 剧情, 科幻 | 美国 | 103 分钟 | 不詳 | **9.0** |
+| 10 | <img src="https://p0.meituan.net/movie/27b76fe6cf3903f3d74963f70786001e1438406.jpg@464w_644h_1e_1c" width="80"> | [狮子王 - The Lion King](https://ssr1.scrape.center/detail/10) | 动画, 歌舞, 冒险 | 美国 | 89 分钟 | 1995-07-15 上映 | **9.0** |
+
+## 統計摘要
+
+- 最高評分：**9.5**（10 部）
+- 最長電影：《乱世佳人》238 分鐘
+- 最多分類：**剧情**（68 部）
+- 最多地區：**美国**（51 部）
+- 最早電影：**1939 年**《乱世佳人》
+- 資料時間：2026-06-30
