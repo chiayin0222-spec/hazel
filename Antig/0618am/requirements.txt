@@ -1,7 +1,0 @@
-manim
-numpy
-scikit-learn
-matplotlib
-streamlit
-plotly
-pandas
