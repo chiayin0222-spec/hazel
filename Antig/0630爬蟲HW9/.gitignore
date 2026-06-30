@@ -1,5 +1,0 @@
-.env
-__pycache__/
-*.xlsx
-streamlit_err.txt
-streamlit_out.txt
