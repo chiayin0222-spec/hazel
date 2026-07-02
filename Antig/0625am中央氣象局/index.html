@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CWA x Windy 氣象觀測儀表板</title>
+  
+  <!-- Google Fonts: Outfit for numbers/headings, Inter for UI text -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- FontAwesome for Premium Icons -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Leaflet CSS (required before Windy boot) -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.4.0/dist/leaflet.css" />
+  
+  <!-- Custom Styling -->
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <!-- Loading Screen Overlay -->
+  <div id="loading-overlay">
+    <div class="spinner-container">
+      <div class="double-bounce1"></div>
+      <div class="double-bounce2"></div>
+    </div>
+    <p>正在載入中央氣象署觀測資料與地圖...</p>
+  </div>
+
+  <!-- Map Container (fills 100% of viewport) -->
+  <div id="windy"></div>
+
+  <!-- Main Floating Dashboard Dashboard Container -->
+  <div class="dashboard-wrapper">
+    
+    <!-- Floating Header Panel -->
+    <header class="glass-panel header-panel">
+      <div class="header-logo">
+        <i class="fa-solid fa-cloud-sun-rain brand-icon"></i>
+        <div class="brand-text">
+          <h1>CWA 臺灣氣象觀測儀表板</h1>
+          <span class="sub-brand">Windy Map & Leaflet 整合視覺化</span>
+        </div>
+      </div>
+      <div class="header-actions">
+        <div class="status-badge live">
+          <span class="pulse-dot"></span>
+          <span>即時觀測</span>
+        </div>
+        <button id="refresh-btn" class="icon-btn" title="重新整理資料">
+          <i class="fa-solid fa-arrows-rotate"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Floating Sidebar Panel -->
+    <aside class="glass-panel sidebar-panel">
+      
+      <!-- Search & Filters Section -->
+      <section class="dashboard-section">
+        <h2 class="section-title"><i class="fa-solid fa-magnifying-glass"></i> 搜尋與篩選</h2>
+        <div class="search-box">
+          <i class="fa-solid fa-location-dot search-icon"></i>
+          <input type="text" id="search-input" placeholder="搜尋測站或縣市（如：台北、崇德）...">
+          <button id="clear-search" class="clear-btn" style="display: none;">
+            <i class="fa-solid fa-xmark"></i>
+          </button>
+        </div>
+        
+        <div class="filter-group">
+          <label for="county-select">縣市選單</label>
+          <div class="select-wrapper">
+            <select id="county-select">
+              <option value="all">全部縣市</option>
+              <!-- 縣市選項將由 JS 動態生成 -->
+            </select>
+            <i class="fa-solid fa-chevron-down select-arrow"></i>
+          </div>
+        </div>
+      </section>
+
+      <!-- 功能控制選單 (Control Menu) -->
+      <section class="dashboard-section">
+        <h2 class="section-title"><i class="fa-solid fa-sliders"></i> 功能控制選單</h2>
+        <div class="control-menu" style="display: flex; flex-direction: column; gap: 12px;">
+          <!-- Weather Variable Selector -->
+          <div class="filter-group">
+            <label>切換觀測要素</label>
+            <div class="toggle-btn-group" style="display: flex; gap: 6px; width: 100%;">
+              <button id="btn-var-temp" class="active" style="flex: 1; padding: 10px; border-radius: 8px; border: 1px solid var(--panel-border); background: rgba(59, 130, 246, 0.15); color: var(--accent-color); cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 4px; font-size: 0.85rem; font-weight: 600; transition: all 0.2s ease;">
+                <i class="fa-solid fa-thermometer"></i> 氣溫
+              </button>
+              <button id="btn-var-rain" style="flex: 1; padding: 10px; border-radius: 8px; border: 1px solid var(--panel-border); background: rgba(255, 255, 255, 0.04); color: var(--text-primary); cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 4px; font-size: 0.85rem; font-weight: 600; transition: all 0.2s ease;">
+                <i class="fa-solid fa-cloud-showers-heavy"></i> 雨量
+              </button>
+              <button id="btn-var-rh" style="flex: 1; padding: 10px; border-radius: 8px; border: 1px solid var(--panel-border); background: rgba(255, 255, 255, 0.04); color: var(--text-primary); cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 4px; font-size: 0.85rem; font-weight: 600; transition: all 0.2s ease;">
+                <i class="fa-solid fa-droplet"></i> 濕度
+              </button>
+            </div>
+          </div>
+          
+          <!-- Map Style Selector -->
+          <div class="filter-group">
+            <label for="map-style-select">切換地圖底圖</label>
+            <div class="select-wrapper">
+              <select id="map-style-select">
+                <option value="osm">標準中文地圖 (OpenStreetMap)</option>
+                <option value="dark">時尚暗黑地圖 (CartoDB Dark)</option>
+                <option value="voyager">精緻彩色地圖 (CartoDB Voyager)</option>
+                <option value="satellite">衛星影像地圖 (Esri Satellite)</option>
+              </select>
+              <i class="fa-solid fa-chevron-down select-arrow"></i>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Analytics Statistics Section -->
+      <section class="dashboard-section">
+        <h2 class="section-title"><i class="fa-solid fa-chart-simple"></i> 觀測數據分析</h2>
+        
+        <div class="stats-grid">
+          <!-- Avg Temp -->
+          <div class="stat-card avg-temp">
+            <div class="stat-icon"><i class="fa-solid fa-temperature-half"></i></div>
+            <div class="stat-info">
+              <span class="stat-label">均溫</span>
+              <span id="stat-avg" class="stat-value">--.-<span class="unit">°C</span></span>
+            </div>
+          </div>
+          
+          <!-- Total Stations -->
+          <div class="stat-card stations-count">
+            <div class="stat-icon"><i class="fa-solid fa-satellite-dish"></i></div>
+            <div class="stat-info">
+              <span class="stat-label">測站總數</span>
+              <span id="stat-count" class="stat-value">--</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Extremes -->
+        <div class="extreme-list">
+          <!-- Max Temp -->
+          <div class="extreme-item hot-extreme">
+            <div class="extreme-header">
+              <span class="extreme-badge hot">最高溫</span>
+              <span id="extreme-high-value" class="extreme-value">--.-°C</span>
+            </div>
+            <div class="extreme-body">
+              <span id="extreme-high-station" class="extreme-station">載入中...</span>
+              <span id="extreme-high-time" class="extreme-time">--:--</span>
+            </div>
+          </div>
+          
+          <!-- Min Temp -->
+          <div class="extreme-item cold-extreme">
+            <div class="extreme-header">
+              <span class="extreme-badge cold">最低溫</span>
+              <span id="extreme-low-value" class="extreme-value">--.-°C</span>
+            </div>
+            <div class="extreme-body">
+              <span id="extreme-low-station" class="extreme-station">載入中...</span>
+              <span id="extreme-low-time" class="extreme-time">--:--</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Footer Info Section -->
+      <footer class="sidebar-footer">
+        <p>觀測時間: <span id="update-time">--:--</span></p>
+        <p>地圖模式: <span id="map-mode-indicator">載入中...</span></p>
+      </footer>
+    </aside>
+
+    <!-- Floating Legend Panel -->
+    <div id="legend-container" class="glass-panel legend-panel">
+      <h3 class="legend-title">溫度級距圖例</h3>
+      <div class="legend-scale">
+        <div class="legend-item">
+          <span class="color-dot" style="background-color: #2b83ba;"></span>
+          <span class="legend-label">&lt; 15°C (寒冷)</span>
+        </div>
+        <div class="legend-item">
+          <span class="color-dot" style="background-color: #abdda4;"></span>
+          <span class="legend-label">15–22°C (涼爽)</span>
+        </div>
+        <div class="legend-item">
+          <span class="color-dot" style="background-color: #ffffbf; border: 1px solid #ddd;"></span>
+          <span class="legend-label">22–28°C (舒適)</span>
+        </div>
+        <div class="legend-item">
+          <span class="color-dot" style="background-color: #fdae61;"></span>
+          <span class="legend-label">28–34°C (炎熱)</span>
+        </div>
+        <div class="legend-item">
+          <span class="color-dot" style="background-color: #d7191c;"></span>
+          <span class="legend-label">&gt; 34°C (酷熱)</span>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.4.0/dist/leaflet.js"></script>
+  
+  <!-- Windy Map Forecast API Boot Loader -->
+  <script src="https://api.windy.com/assets/map-forecast/libBoot.js"></script>
+  
+  <!-- Dashboard JavaScript Logic -->
+  <script src="app.js"></script>
+</body>
+</html>
