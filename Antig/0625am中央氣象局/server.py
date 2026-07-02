@@ -16,6 +16,14 @@ def load_env(filepath=".env"):
 # 初始化載入 .env
 load_env()
 
+# 確保 MIME type 正確 (防止 Windows 登錄檔毀損導致 CSS 被當作 text/plain 而被瀏覽器阻擋)
+http.server.SimpleHTTPRequestHandler.extensions_map.update({
+    '.css': 'text/css',
+    '.js': 'application/javascript',
+    '.html': 'text/html',
+    '.json': 'application/json'
+})
+
 PORT = 8000
 
 class DashboardRequestHandler(http.server.SimpleHTTPRequestHandler):

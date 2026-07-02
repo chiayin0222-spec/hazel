@@ -4,3 +4,5 @@ weather_observation.csv
 weather_clean.json
 O-A0001-001.json
 __pycache__/
+
+.vercel
