@@ -376,6 +376,11 @@ body {
   box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
 }
 
+.select-wrapper select option {
+  color: #0f172a !important;
+  background-color: #ffffff !important;
+}
+
 .select-arrow {
   position: absolute;
   right: 16px;
