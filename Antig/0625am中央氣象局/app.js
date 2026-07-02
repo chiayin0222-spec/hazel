@@ -127,10 +127,15 @@ document.addEventListener("DOMContentLoaded", () => {
   // Set up search event listeners
   const searchInput = document.getElementById("search-input");
   const clearBtn = document.getElementById("clear-search");
+  const countySelect = document.getElementById("county-select");
 
   searchInput.addEventListener("input", (e) => {
     const value = e.target.value.trim();
     clearBtn.style.display = value ? "block" : "none";
+    // 如果使用者在搜尋框輸入文字，自動將縣市篩選重設為「全部縣市」，避免互相衝突導致查無結果
+    if (value) {
+      countySelect.value = "all";
+    }
     filterAndRender();
   });
 
@@ -142,7 +147,12 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   // Set up county filter event listener
-  document.getElementById("county-select").addEventListener("change", () => {
+  countySelect.addEventListener("change", (e) => {
+    // 如果使用者手動選了特定縣市，自動清除搜尋關鍵字，避免衝突
+    if (e.target.value !== "all") {
+      searchInput.value = "";
+      clearBtn.style.display = "none";
+    }
     filterAndRender();
   });
 
