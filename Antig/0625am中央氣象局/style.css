@@ -12,23 +12,23 @@
 :root {
   --font-heading: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   --font-body: 'Inter', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
-  
+
   /* Harmonious Dark Palette */
   --bg-color: #0b0f19;
   --panel-bg: rgba(15, 23, 42, 0.75);
   --panel-border: rgba(255, 255, 255, 0.1);
   --panel-border-focus: rgba(59, 130, 246, 0.4);
-  
+
   /* Text Colors */
   --text-primary: #f8fafc;
   --text-secondary: #94a3b8;
   --text-muted: #64748b;
-  
+
   /* Accents & Temperature Status Colors */
   --accent-color: #3b82f6;
   --accent-hover: #2563eb;
   --live-color: #10b981;
-  
+
   /* Temperature Scale Palette */
   --temp-cold: #2b83ba;
   --temp-cool: #abdda4;
@@ -86,7 +86,8 @@ body {
   position: relative;
 }
 
-.double-bounce1, .double-bounce2 {
+.double-bounce1,
+.double-bounce2 {
   width: 100%;
   height: 100%;
   border-radius: 50%;
@@ -103,8 +104,15 @@ body {
 }
 
 @keyframes bounce {
-  0%, 100% { transform: scale(0.0); }
-  50% { transform: scale(1.0); }
+
+  0%,
+  100% {
+    transform: scale(0.0);
+  }
+
+  50% {
+    transform: scale(1.0);
+  }
 }
 
 /* ==========================================================================
@@ -114,7 +122,8 @@ body {
   position: relative;
   width: 100%;
   height: 100%;
-  pointer-events: none; /* Let clicks pass through to map below */
+  pointer-events: none;
+  /* Let clicks pass through to map below */
   z-index: 10;
 }
 
@@ -125,7 +134,8 @@ body {
   border: 1px solid var(--panel-border);
   border-radius: 16px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.45);
-  pointer-events: auto; /* Re-enable pointer events for panels */
+  pointer-events: auto;
+  /* Re-enable pointer events for panels */
   transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
@@ -206,10 +216,12 @@ body {
     transform: scale(0.95);
     box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
   }
+
   70% {
     transform: scale(1);
     box-shadow: 0 0 0 6px rgba(16, 185, 129, 0);
   }
+
   100% {
     transform: scale(0.95);
     box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
@@ -352,7 +364,8 @@ body {
   border-radius: 12px;
   font-size: 0.9rem;
   font-family: var(--font-body);
-  appearance: none; /* Remove default browser arrow */
+  appearance: none;
+  /* Remove default browser arrow */
   cursor: pointer;
   transition: all 0.2s ease;
 }
@@ -576,7 +589,7 @@ body {
   height: 12px;
   border-radius: 50%;
   flex-shrink: 0;
-  box-shadow: 0 0 6px rgba(0,0,0,0.2);
+  box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
 }
 
 .legend-label {
@@ -595,7 +608,7 @@ body {
   color: var(--text-primary) !important;
   border-radius: 12px !important;
   padding: 4px !important;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.5) !important;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5) !important;
 }
 
 .leaflet-popup-tip {
@@ -686,6 +699,7 @@ body {
 .custom-temp-marker {
   transition: transform 0.2s ease;
 }
+
 .custom-temp-marker:hover {
   transform: scale(1.2);
   filter: brightness(1.2) drop-shadow(0 0 6px var(--accent-color));
@@ -693,11 +707,13 @@ body {
 
 /* Reposition Leaflet Controls */
 .leaflet-left .leaflet-control {
-  margin-left: 390px !important; /* Move zoom control right of sidebar */
+  margin-left: 390px !important;
+  /* Move zoom control right of sidebar */
 }
 
 .leaflet-top .leaflet-control {
-  margin-top: 102px !important; /* Push it down below header */
+  margin-top: 102px !important;
+  /* Push it down below header */
 }
 
 /* Scrollbar styling for sidebar */
@@ -727,7 +743,7 @@ body {
     height: 60px;
     padding: 0 16px;
   }
-  
+
   .sidebar-panel {
     top: 76px;
     left: 8px;
@@ -737,7 +753,7 @@ body {
     max-height: 40vh;
     padding: 16px;
   }
-  
+
   .legend-panel {
     bottom: 8px;
     right: 8px;
@@ -747,19 +763,136 @@ body {
     justify-content: center;
     padding: 8px;
   }
-  
+
   .legend-title {
     display: none;
   }
-  
+
   .legend-scale {
     flex-direction: row;
     flex-wrap: wrap;
     justify-content: center;
     gap: 8px 16px;
   }
-  
+
   .leaflet-left .leaflet-control {
     margin-left: 10px !important;
   }
+}
+
+
+
+.dashboard-wrapper {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 9999;
+}
+
+.header-panel,
+.sidebar-panel,
+.legend-panel {
+  pointer-events: auto;
+}
+
+.sidebar-panel {
+  position: fixed;
+  top: 90px;
+  right: 24px;
+  width: 360px;
+  max-height: calc(100vh - 120px);
+  overflow-y: auto;
+  z-index: 10000;
+  display: block;
+}
+
+.header-panel {
+  position: fixed;
+  top: 16px;
+  left: 24px;
+  right: 24px;
+  z-index: 10000;
+}
+
+#windy {
+  position: fixed;
+  inset: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 1;
+}
+
+.dashboard-wrapper {
+  position: fixed !important;
+  inset: 0 !important;
+  z-index: 9999 !important;
+  pointer-events: none !important;
+}
+
+.header-panel {
+  position: fixed !important;
+  top: 16px !important;
+  left: 24px !important;
+  right: 420px !important;
+  z-index: 10000 !important;
+  pointer-events: auto !important;
+}
+
+.sidebar-panel {
+  position: fixed !important;
+  top: 16px !important;
+  right: 24px !important;
+  left: auto !important;
+  bottom: auto !important;
+  width: 360px !important;
+  max-height: calc(100vh - 32px) !important;
+  overflow-y: auto !important;
+  display: flex !important;
+  flex-direction: column !important;
+  padding: 24px !important;
+  gap: 24px !important;
+  z-index: 10001 !important;
+  background: rgba(15, 23, 42, 0.92) !important;
+  color: white !important;
+  pointer-events: auto !important;
+}
+
+.legend-panel {
+  position: static !important;
+  width: 100% !important;
+  padding: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: var(--text-primary);
+  font-size: 0.9rem;
+}
+
+.checkbox-row input {
+  width: 16px;
+  height: 16px;
+}
+
+#windy {
+  position: fixed !important;
+  inset: 0 !important;
+  width: 100vw !important;
+  height: 100vh !important;
+  z-index: 1 !important;
+}
+
+.station-label {
+  background: rgba(15, 23, 42, 0.9) !important;
+  color: #ffffff !important;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+  border-radius: 8px !important;
+  padding: 4px 8px !important;
+  font-size: 12px !important;
+  font-weight: 600 !important;
 }

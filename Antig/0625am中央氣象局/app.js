@@ -13,6 +13,8 @@ let updateIntervalId = null;
 // Active weather variable: 'temperature', 'precipitation', or 'humidity'
 let activeVar = "temperature";
 let activeTileLayer = null;
+let showCwaObservations = true;
+let showStationLabels = false;
 
 // Map style tile options (CartoDB and OSM)
 const mapStyles = {
@@ -77,16 +79,16 @@ function getVarColor(val, variable) {
     if (val < 28) return "#ffffbf";       // Comfortable
     if (val < 34) return "#fdae61";       // Hot
     return "#d7191c";                      // Very Hot
-  } 
-  
+  }
+
   if (variable === "precipitation") {
     if (val <= 0) return "#94a3b8";        // No rain
     if (val < 2) return "#93c5fd";         // Light rain
     if (val < 10) return "#3b82f6";        // Moderate rain
     if (val < 20) return "#1d4ed8";        // Heavy rain
     return "#701a75";                      // Torrential rain
-  } 
-  
+  }
+
   if (variable === "humidity") {
     if (val < 40) return "#fdae61";        // Dry (Orange)
     if (val < 65) return "#abdda4";        // Comfortable (Green)
@@ -100,7 +102,7 @@ function getVarColor(val, variable) {
 // Initialize the Application
 document.addEventListener("DOMContentLoaded", () => {
   setupApp();
-  
+
   // Set up refresh button event listener
   document.getElementById("refresh-btn").addEventListener("click", () => {
     const btn = document.getElementById("refresh-btn");
@@ -110,16 +112,28 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   });
 
+  // Show / hide CWA observation markers
+  document.getElementById("show-cwa").addEventListener("change", (e) => {
+    showCwaObservations = e.target.checked;
+    filterAndRender();
+  });
+
+  // Show / hide station labels
+  document.getElementById("show-labels").addEventListener("change", (e) => {
+    showStationLabels = e.target.checked;
+    filterAndRender();
+  });
+
   // Set up search event listeners
   const searchInput = document.getElementById("search-input");
   const clearBtn = document.getElementById("clear-search");
-  
+
   searchInput.addEventListener("input", (e) => {
     const value = e.target.value.trim();
     clearBtn.style.display = value ? "block" : "none";
     filterAndRender();
   });
-  
+
   clearBtn.addEventListener("click", () => {
     searchInput.value = "";
     clearBtn.style.display = "none";
@@ -154,7 +168,7 @@ function setupVariableToggles() {
     activeBtn.style.background = "rgba(59, 130, 246, 0.15)";
     activeBtn.style.color = "var(--accent-color)";
     activeBtn.classList.add("active");
-    
+
     inactiveBtns.forEach(btn => {
       btn.style.background = "rgba(255, 255, 255, 0.04)";
       btn.style.color = "var(--text-primary)";
@@ -198,11 +212,11 @@ function updateLegend() {
 // Change the Leaflet Map Base Layer Style
 function setMapStyle(styleKey) {
   if (!map || mapMode === "Windy 動態天氣地圖模式") return;
-  
+
   if (activeTileLayer) {
     map.removeLayer(activeTileLayer);
   }
-  
+
   const style = mapStyles[styleKey] || mapStyles.osm;
   activeTileLayer = L.tileLayer(style.url, {
     attribution: style.attribution,
@@ -213,7 +227,7 @@ function setMapStyle(styleKey) {
 // App Setup: Config Fetching and Map Initialization
 async function setupApp() {
   let windyKey = "";
-  
+
   try {
     const response = await fetch("/api/config");
     if (response.ok) {
@@ -242,7 +256,7 @@ async function setupApp() {
 
       // Add default tile layer (OSM with Chinese labels)
       setMapStyle("osm");
-      
+
       // Initialize markers layer
       markersLayer = L.layerGroup().addTo(map);
 
@@ -264,7 +278,7 @@ async function setupApp() {
 
   // Attempt Windy initialization if a valid key is provided
   const isKeyValid = windyKey && windyKey.trim() !== "" && !windyKey.includes("YOUR_");
-  
+
   if (isKeyValid && typeof windyInit === "function") {
     try {
       const options = {
@@ -278,15 +292,15 @@ async function setupApp() {
       windyInit(options, (windyAPI) => {
         clearTimeout(windyTimeout);
         if (mapInitialized) return;
-        
+
         map = windyAPI.map;
         mapInitialized = true;
         mapMode = "Windy 動態天氣地圖模式";
         document.getElementById("map-mode-indicator").innerText = mapMode;
-        
+
         // Disable base map selectors since Windy manages its background
         document.getElementById("map-style-select").disabled = true;
-        
+
         // Initialize markers layer on top of Windy map
         markersLayer = L.layerGroup().addTo(map);
 
@@ -309,13 +323,13 @@ async function fetchAndRenderData() {
   try {
     const response = await fetch("/api/cwa-temperature");
     if (!response.ok) throw new Error(`HTTP error! status: ${response.status}`);
-    
+
     const data = await response.json();
     allStationsData = data;
-    
+
     // Populate county filter options
     populateCountySelect(data);
-    
+
     // Render current filtered list
     filterAndRender();
   } catch (error) {
@@ -328,10 +342,10 @@ async function fetchAndRenderData() {
 function populateCountySelect(data) {
   const countySelect = document.getElementById("county-select");
   const currentValue = countySelect.value;
-  
+
   // Extract unique county names, filter out falsy values
   const counties = [...new Set(data.map(item => item.county).filter(Boolean))].sort();
-  
+
   // Reset and rebuild options
   countySelect.innerHTML = '<option value="all">全部縣市</option>';
   counties.forEach(county => {
@@ -340,7 +354,7 @@ function populateCountySelect(data) {
     option.textContent = county;
     countySelect.appendChild(option);
   });
-  
+
   // Keep previous selection if it still exists
   if (counties.includes(currentValue)) {
     countySelect.value = currentValue;
@@ -355,7 +369,7 @@ function filterAndRender() {
 
   const searchQuery = document.getElementById("search-input").value.trim().toLowerCase();
   const selectedCounty = document.getElementById("county-select").value;
-  
+
   // Filter stations array
   const filteredStations = allStationsData.filter(station => {
     // 1. County filter
@@ -382,8 +396,11 @@ function filterAndRender() {
 
 // Render Circle Markers for each weather station
 function renderMarkers(stations) {
-  // Clear existing markers from layer
   markersLayer.clearLayers();
+
+  if (!showCwaObservations) {
+    return;
+  }
 
   stations.forEach(station => {
     if (station.lat == null || station.lon == null) return;
@@ -412,7 +429,7 @@ function renderMarkers(stations) {
     }
 
     const color = getVarColor(activeVal, activeVar);
-    
+
     // Create interactive circle marker
     const marker = L.circleMarker([station.lat, station.lon], {
       radius: 9,
@@ -472,9 +489,20 @@ function renderMarkers(stations) {
       closeButton: false,
       offset: L.point(0, -6)
     });
+    if (showStationLabels) {
+      marker.bindTooltip(
+        `${station.stationName} ${displayVal}${displayUnit}`,
+        {
+          permanent: true,
+          direction: "top",
+          offset: [0, -10],
+          className: "station-label"
+        }
+      );
+    }
 
     // Hover tooltip/popup bindings for enhanced user interaction
-    marker.on("mouseover", function(e) {
+    marker.on("mouseover", function (e) {
       this.openPopup();
     });
 
@@ -545,7 +573,7 @@ function updateStatistics(stations) {
     }
 
     sum += sVal;
-    
+
     // Evaluate extremes
     if (sVal > highVal) highest = s;
     if (sVal < lowVal) lowest = s;
@@ -594,7 +622,7 @@ function updateStatistics(stations) {
     if (!s.obsTime) return latest;
     return !latest || s.obsTime > latest ? s.obsTime : latest;
   }, "");
-  
+
   document.getElementById("update-time").innerText = latestTime ? formatObsTime(latestTime) : "--:--";
 }
 
@@ -604,10 +632,10 @@ function formatObsTime(isoString) {
   try {
     const parts = isoString.split("T");
     if (parts.length < 2) return isoString;
-    
+
     const timePart = parts[1].substring(0, 5); // Returns HH:MM
     const datePart = parts[0].substring(5);    // Returns MM-DD
-    
+
     return `${datePart} ${timePart}`;
   } catch (e) {
     return isoString;
